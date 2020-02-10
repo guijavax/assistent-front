@@ -1,15 +1,34 @@
 <template>
     <div>
-        <h2></h2>
+        <h2 v-for="result in res" v-bind:key="result"> {{ result }} </h2>
+        <input v-model="cep" @change="buscaCep">
     </div>
 </template>
 
 <script>
 import { HTTP_SERVICE } from '../util/requisitions'
 export default{
+  data () {
+    return {
+      res: [],
+      urlServer: 'http://localhost:8080/',
+      urlCep: 'http://viacep.com.br/ws/',
+      cep: ''
+    }
+  },
+  methods: {
+    buscaCep () {
+      if (this.cep.length > 8) {
+        return
+      }
+      HTTP_SERVICE().get(this, this.urlCep + this.cep + '/json', (response) => {
+        console.log(response)
+      })
+    }
+  },
   created () {
-    HTTP_SERVICE().get(this, 'assistent/client/findAll', (response) => {
-      console.log(response.body)
+    HTTP_SERVICE().get(this, this.urlServer + 'assistent/client/findAll', (response) => {
+      this.res = response
     })
   }
 }
