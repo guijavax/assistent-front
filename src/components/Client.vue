@@ -2,10 +2,14 @@
     <div>
         <h2 v-for="result in res" v-bind:key="result"> {{ result }} </h2>
         <input v-model="cep" @change="buscaCep">
-        <select v-model="estado">
-          <option disabled value="">Selecione um estado</option>
-          <option v-for="uf in estados" v-bind:key="uf">{{uf.name}}</option>
-        </select> 
+        <select @change="change" v-model="estado">
+          <option disabled >Selecione um estado</option>
+          <option v-for="estado in estados" :value="estado" :key="estado">{{estado.name}}</option>
+        </select>
+        <select  v-model="cidade">
+          <option disabled value="">Selecione uma cidade</option>
+          <option v-for="cidade in cidades" :key="cidade" :value="estado">{{cidade.name}}</option>
+        </select>
     </div>
 </template>
 
@@ -19,16 +23,23 @@ export default{
       urlCep: 'http://viacep.com.br/ws/',
       cep: '',
       estados: [],
-      estado: {}
+      estado: {},
+      cidades: [],
+      cidade: {}
     }
   },
   methods: {
     buscaCep () {
       if (this.cep.length < 8) {
-        return  
+        return
       }
       HTTP_SERVICE().get(this, this.urlCep + this.cep + '/json', (response) => {
         console.log(response)
+      })
+    },
+    change () {
+      HTTP_SERVICE().get(this, this.urlServer + 'assistent/city/findByState/' + this.estado.id, (response) => {
+        this.cidades = response
       })
     }
   },
